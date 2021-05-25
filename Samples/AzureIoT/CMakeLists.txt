@@ -14,7 +14,8 @@ add_subdirectory(common)
 
 # The subdirectory below can be set to one of IoTHub, DPS or IoTEdge, to include the code
 # particular to that connectivity scenario.
-add_subdirectory(IoTHub)
+#add_subdirectory(IoTHub)
+add_subdirectory(IoTEdge)
 
 target_include_directories(${PROJECT_NAME} PUBLIC
                            ${CMAKE_SOURCE_DIR}/common
@@ -61,4 +62,6 @@ endif()
 
 add_dependencies(ValidateManifest ${PROJECT_NAME})
 
-azsphere_target_add_image_package(${PROJECT_NAME})
+#azsphere_target_add_image_package(${PROJECT_NAME})
+
+azsphere_target_add_image_package(${PROJECT_NAME} RESOURCE_FILES "certs/azure-iot-test-only.root.ca.cert.pem")

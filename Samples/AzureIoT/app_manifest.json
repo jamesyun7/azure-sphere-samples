@@ -3,11 +3,11 @@
   "Name": "AzureIoT",
   "ComponentId": "819255ff-8640-41fd-aea7-f85d34c491d5",
   "EntryPoint": "/bin/app",
-  "CmdArgs": [ ],
+  "CmdArgs": ["--Hostname", "sphereedgetest1.koreacentral.cloudapp.azure.com", "--IoTEdgeRootCAPath", "certs/azure-iot-test-only.root.ca.cert.pem" ],
   "Capabilities": {
-    "AllowedConnections": [],
+    "AllowedConnections": ["sphereedgetest1.koreacentral.cloudapp.azure.com", "raspberry", "172.20.10.2", "192.168.1.250", "AzureSphere2.azure-devices.net"],
     "Gpio": [ "$SAMPLE_BUTTON_1", "$SAMPLE_BUTTON_2", "$SAMPLE_LED" ],
-    "DeviceAuthentication": "00000000-0000-0000-0000-000000000000"
+    "DeviceAuthentication": "3db87b05-0679-4d82-a73c-0f941aa8514a"
   },
   "ApplicationType": "Default"
 }
