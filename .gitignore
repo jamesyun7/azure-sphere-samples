@@ -1,0 +1,17 @@
+#Build output
+out/
+_build/
+Output/
+[Bb]uild/
+
+#Visual Studio
+.vs/
+
+#Nordic
+*.jlink
+*.emSession
+
+#STM32Cube
+*.settings
+[Dd]ebug/
+[Rr]elease/

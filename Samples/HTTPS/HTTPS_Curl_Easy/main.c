@@ -9,10 +9,11 @@
 // - curl (URL transfer library)
 // - eventloop (system invokes handlers for timer events)
 // - log (displays messages in the Device Output window during debugging)
-// - networking (network interface connection status)
+// - networking (network ready)
 // - storage (device storage interaction)
 
 #include <errno.h>
+#include <getopt.h>
 #include <stdbool.h>
 #include <string.h>
 #include <stdlib.h>
@@ -24,6 +25,7 @@
 #include "applibs_versions.h"
 #include <applibs/log.h>
 #include <applibs/networking.h>
+#include <applibs/networking_curl.h>
 #include <applibs/storage.h>
 
 #include "eventloop_timer_utilities.h"
@@ -40,7 +42,8 @@ typedef enum {
     ExitCode_Init_EventLoop = 3,
     ExitCode_Init_DownloadTimer = 4,
     ExitCode_Main_EventLoopFail = 5,
-    ExitCode_InterfaceConnectionStatus_Failed = 6
+    ExitCode_IsNetworkingReady_Failed = 6,
+    ExitCode_CurlSetDefaultProxy_Failed = 7
 } ExitCode;
 
 /// <summary>
@@ -62,13 +65,13 @@ static void PerformWebPageDownload(void);
 static void TimerEventHandler(EventLoopTimer *timer);
 static ExitCode InitHandlers(void);
 static void CloseHandlers(void);
-static bool IsNetworkInterfaceConnectedToInternet(void);
+static bool IsNetworkReady(void);
 static int TransferInfoCallback(void *clientp, curl_off_t dltotal, curl_off_t dlnow,
                                 curl_off_t ultotal, curl_off_t ulnow);
+static void ParseCommandLineArguments(int argc, char *argv[]);
 
 static EventLoop *eventLoop = NULL;
 static EventLoopTimer *downloadTimer = NULL;
-static const char networkInterface[] = "wlan0";
 
 static volatile sig_atomic_t exitCode = ExitCode_Success;
 
@@ -77,6 +80,9 @@ static const size_t MaxResponseCharsToPrint = 2048;
 
 // Flag to indicate if all content has been logged.
 static bool printedEntireResponse = false;
+
+// By default, do not bypass proxy.
+static bool bypassProxy = false;
 
 /// <summary>
 ///     Signal handler for termination requests. This handler must be async-signal-safe.
@@ -188,28 +194,21 @@ static void LogCurlError(const char *message, int curlErrCode)
 }
 
 /// <summary>
-///     Checks that the interface is connected to the internet.
+///     Checks that the network is ready.
 /// </summary>
-static bool IsNetworkInterfaceConnectedToInternet(void)
+static bool IsNetworkReady(void)
 {
-    Networking_InterfaceConnectionStatus status;
-    if (Networking_GetInterfaceConnectionStatus(networkInterface, &status) != 0) {
-        if (errno != EAGAIN) {
-            Log_Debug("ERROR: Networking_GetInterfaceConnectionStatus: %d (%s)\n", errno,
-                      strerror(errno));
-            exitCode = ExitCode_InterfaceConnectionStatus_Failed;
-            return false;
-        }
-        Log_Debug("WARNING: Not doing download because the networking stack isn't ready yet.\n");
+    bool isNetworkReady = false;
+    if (Networking_IsNetworkingReady(&isNetworkReady) == -1) {
+        Log_Debug("ERROR: Networking_IsNetworkingReady: %d (%s)\n", errno, strerror(errno));
+        exitCode = ExitCode_IsNetworkingReady_Failed;
         return false;
     }
 
-    if ((status & Networking_InterfaceConnectionStatus_ConnectedToInternet) == 0) {
-        Log_Debug("WARNING: Not doing download because there is no internet connectivity.\n");
-        return false;
+    if (!isNetworkReady) {
+        Log_Debug("WARNING: Not doing download because the network is not ready.\n");
     }
-
-    return true;
+    return isNetworkReady;
 }
 
 /// <summary>
@@ -246,7 +245,7 @@ static void PerformWebPageDownload(void)
 
     printedEntireResponse = false;
 
-    if (IsNetworkInterfaceConnectedToInternet() == false) {
+    if (IsNetworkReady() == false) {
         goto exitLabel;
     }
 
@@ -343,6 +342,22 @@ static void PerformWebPageDownload(void)
         goto cleanupLabel;
     }
 
+    // Configure the cURL handle to use the proxy.
+    if (!bypassProxy) {
+        if (Networking_Curl_SetDefaultProxy(curlHandle) != 0) {
+            Log_Debug("Networking_Curl_SetDefaultProxy failed: errno=%d (%s)\n", errno,
+                      strerror(errno));
+            exitCode = ExitCode_CurlSetDefaultProxy_Failed;
+            goto cleanupLabel;
+        }
+    }
+
+    // When using libcurl, as with other networking applications, the Azure Sphere OS will
+    // allocate socket buffers which are attributed to your application's RAM usage. You can tune
+    // the size of these buffers to reduce the RAM footprint of your application as appropriate.
+    // Refer to https://docs.microsoft.com/azure-sphere/app-development/ram-usage-best-practices
+    // for further details.
+
     // Perform the download of the web page.
     if ((res = curl_easy_perform(curlHandle)) != CURLE_OK) {
         LogCurlError("curl_easy_perform", res);
@@ -420,12 +435,38 @@ static void CloseHandlers(void)
 }
 
 /// <summary>
+///     Parse the command-line arguments given in the application manifest.
+/// </summary>
+static void ParseCommandLineArguments(int argc, char *argv[])
+{
+    int option = 0;
+    static const struct option cmdLineOptions[] = {
+        {.name = "BypassProxy", .has_arg = no_argument, .flag = NULL, .val = 'b'},
+        {.name = NULL, .has_arg = 0, .flag = NULL, .val = 0}};
+
+    // Loop over all of the options.
+    while ((option = getopt_long(argc, argv, "b", cmdLineOptions, NULL)) != -1) {
+        switch (option) {
+        case 'b':
+            Log_Debug("Bypass Proxy\n");
+            bypassProxy = true;
+            break;
+        default:
+            // Unknown options are ignored.
+            break;
+        }
+    }
+}
+
+/// <summary>
 ///     Main entry point for this sample.
 /// </summary>
 int main(int argc, char *argv[])
 {
     Log_Debug("cURL easy interface based application starting.\n");
     Log_Debug("This sample periodically attempts to download a webpage, using curl's 'easy' API.");
+
+    ParseCommandLineArguments(argc, argv);
 
     exitCode = InitHandlers();
     if (exitCode == ExitCode_Success) {

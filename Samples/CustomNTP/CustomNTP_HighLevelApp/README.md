@@ -18,8 +18,6 @@ extendedZipContent:
   target: SECURITY.md
 - path: Samples/troubleshooting.md
   target: troubleshooting.md
-- path: ethernet-setup-instructions.md
-  target: ethernet-setup-instructions.md
 description: "Demonstrates how to configure custom NTP servers on an MT3620 device."
 ---
 
@@ -56,20 +54,17 @@ The sample uses the following Azure Sphere libraries.
 
 The sample requires the following hardware:
 
-- [Seeed MT3620 Development Kit](https://aka.ms/azurespheredevkits) or other hardware that implements the [MT3620 Reference Development Board (RDB)](https://docs.microsoft.com/azure-sphere/hardware/mt3620-reference-board-design) design.
+- An [Azure Sphere development board](https://aka.ms/azurespheredevkits) that supports the [Sample Appliance](../../../HardwareDefinitions) hardware requirements.
 
-**Note:** By default, this sample targets [MT3620 reference development board (RDB)](https://docs.microsoft.com/azure-sphere/hardware/mt3620-reference-board-design) hardware, such as the MT3620 development kit from Seeed Studios. To build the sample for different Azure Sphere hardware, change the Target Hardware Definition Directory in the CMakeLists.txt file. For detailed instructions, see the [README file in the HardwareDefinitions folder](../../../HardwareDefinitions/README.md).
+   **Note:** By default, the sample targets the [Reference Development Board](https://docs.microsoft.com/azure-sphere/hardware/mt3620-reference-board-design) design, which is implemented by the Seeed Studios MT3620 Development Board. To build the sample for different Azure Sphere hardware, change the value of the TARGET_HARDWARE variable in the `CMakeLists.txt` file. For detailed instructions, see the [Hardware Definitions README](../../../HardwareDefinitions/README.md) file.
 
 ## Setup
 
 Complete the following steps to set up this sample.
 
 1. Ensure that your Azure Sphere device is connected to your computer, and your computer is connected to the internet.
-1. Even if you've performed this setup previously, ensure that you have Azure Sphere SDK version 21.04 or above. At the command prompt, run **azsphere show-version** to check. Install the Azure Sphere SDK for [Windows](https://docs.microsoft.com/azure-sphere/install/install-sdk) or [Linux](https://docs.microsoft.com/azure-sphere/install/install-sdk-linux) as needed.
-1. Enable application development, if you have not already done so, by entering the following line at the command prompt:
-
-    `azsphere device enable-development`
-
+1. Even if you've performed this setup previously, ensure that you have Azure Sphere SDK version 21.10 or above. At the command prompt, run **azsphere show-version** to check. Install the Azure Sphere SDK for [Windows](https://docs.microsoft.com/azure-sphere/install/install-sdk) or [Linux](https://docs.microsoft.com/azure-sphere/install/install-sdk-linux) as needed.
+1. Enable application development, if you have not already done so, by entering the **azsphere device enable-development** command at the command prompt.
 1. Clone the [Azure Sphere samples](https://github.com/Azure/azure-sphere-samples) repository and find the *CustomNTP_HighLevelApp* sample in the *CustomNTP* folder or download the zip file from the [Microsoft samples browser](https://docs.microsoft.com/samples/azure/azure-sphere-samples/customntp/).
 
 1. Configure the sample application to work with your NTP server configuration. There are three different types of NTP server configurations possible:
@@ -80,9 +75,7 @@ Complete the following steps to set up this sample.
 
    The sample can be configured with any one type at a time. For details, see the section [Specifying an NTP Server](https://docs.microsoft.com/azure-sphere/app-development/rtc#specifying-an-ntp-server) in the topic [Manage system time and the RTC in high-level applications](https://docs.microsoft.com/azure-sphere/app-development/rtc).
 
-### Use Ethernet instead of Wi-Fi
-
-By default, this sample runs over a Wi-Fi connection to the internet. To use Ethernet instead, follow the [Ethernet setup instructions](../../../ethernet-setup-instructions.md).
+1. Configure networking on your device. You must either [set up WiFi](https://docs.microsoft.com/azure-sphere/install/configure-wifi#set-up-wi-fi-on-your-azure-sphere-device) or [set up Ethernet](https://docs.microsoft.com/azure-sphere/network/connect-ethernet) on your development board, depending on the type of network connection you are using.
 
 ### System default NTP server configuration
 
@@ -113,9 +106,9 @@ In this configuration, the sample connects to up to two user-configured NTP serv
 To configure the sample to connect to a primary NTP server and, optionally, a secondary NTP server, make the following revisions in the `app_manifest.json` file:
 
 1. Add `"--TimeSource", "Custom"` in the **CmdArgs** field.
-1. Fallback is enabled by default. To disable fallback, add  `"--DisableFallback"` in the  **CmdArgs** field. Configure this option only if you want fallback to be disabled.
-1. Add `"--PrimaryNTPServer", "<hostname_or_ip>"` in the **CmdArgs** field and replace *`<hostname_or_ip>`* with the hostname or IP address of your primary NTP server.
-1. If you want the sample to connect to a secondary NTP server, add `"--SecondaryNTPServer", "<hostname_or_ip>"` in the  **CmdArgs** field and replace *`<hostname_or_ip>`* with the hostname or IP address of your secondary NTP server.
+1. Fallback is enabled by default. To disable fallback, add `"--DisableFallback"` in the  **CmdArgs** field. Configure this option only if you want fallback to be disabled.
+1. Add `"--PrimaryNtpServer", "<hostname_or_ip>"` in the **CmdArgs** field and replace *`<hostname_or_ip>`* with the hostname or IP address of your primary NTP server.
+1. If you want the sample to connect to a secondary NTP server, add `"--SecondaryNtpServer", "<hostname_or_ip>"` in the  **CmdArgs** field and replace *`<hostname_or_ip>`* with the hostname or IP address of your secondary NTP server.
 
 The **CmdArgs** field should now look the following:
 
@@ -135,7 +128,9 @@ To build and run this sample, follow the instructions in [Build a sample applica
 
 ### Test the sample
 
-When the sample runs, it configures the NTP servers according to your configuration in the application manifest file. The output will be displayed in the terminal window. Use button A (SAMPLE_BUTTON_1) and the status LED as described below.
+When the sample runs, it configures the NTP servers according to your configuration in the application manifest file. The output will be displayed in the terminal window. Once the device successfully syncs with the configured NTP server, it will display a log message, `Successfully synced with the configured NTP server.`
+
+Use button A (SAMPLE_BUTTON_1) and the status LED as described below.
 
 SAMPLE_BUTTON_1 does the following:
 

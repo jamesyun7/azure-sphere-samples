@@ -53,24 +53,21 @@ The sample uses the following Azure Sphere libraries.
 
 This sample requires the following hardware:
 
-- Azure Sphere device
+- An [Azure Sphere development board](https://aka.ms/azurespheredevkits) that supports the [Sample Appliance](../../../HardwareDefinitions) hardware requirements.
 
-   **NOTE:** By default, this sample targets [MT3620 reference development board (RDB)](https://docs.microsoft.com/azure-sphere/hardware/mt3620-reference-board-design) hardware, such as the MT3620 development kit from Seeed Studios. To build the sample for different Azure Sphere hardware, change the Target Hardware Definition Directory in the CMakeLists.txt file. For detailed instructions, see the [README file in the HardwareDefinitions folder](../../../HardwareDefinitions/README.md). You might also need to wire the boards differently; check with your hardware manufacturer for details.
+   **Note:** By default, the sample targets the [Reference Development Board](https://docs.microsoft.com/azure-sphere/hardware/mt3620-reference-board-design) design, which is implemented by the Seeed Studios MT3620 Development Board. To build the sample for different Azure Sphere hardware, change the value of the TARGET_HARDWARE variable in the `CMakeLists.txt` file. For detailed instructions, see the [Hardware Definitions README](../../../HardwareDefinitions/README.md) file.
 
 - ST LSM6DS3 accelerometer
 - 2 x 10K ohm resistors
-- We recommend a breadboard because this sample requires wiring from multiple sources to the same pin and the use of pull-up resistors.
-- Jumper wires to connect the boards.
+- A breadboard (recommended because this sample requires wiring from multiple sources to the same pin and the use of pull-up resistors)
+- Jumper wires to connect the boards
 
 ## Setup
 
 1. Set up your Azure Sphere device and development environment as described in the [Azure Sphere documentation](https://docs.microsoft.com/azure-sphere/install/overview).
-1. Even if you've performed this setup previously, ensure that you have Azure Sphere SDK version 21.04 or above. At the command prompt, run **azsphere show-version** to check. Upgrade the Azure Sphere SDK for [Windows](https://docs.microsoft.com/azure-sphere/install/install-sdk) or [Linux](https://docs.microsoft.com/azure-sphere/install/install-sdk-linux) as needed.
+1. Even if you've performed this setup previously, ensure that you have Azure Sphere SDK version 21.10 or above. At the command prompt, run **azsphere show-version** to check. Upgrade the Azure Sphere SDK for [Windows](https://docs.microsoft.com/azure-sphere/install/install-sdk) or [Linux](https://docs.microsoft.com/azure-sphere/install/install-sdk-linux) as needed.
 1. Connect your Azure Sphere device to your computer by USB.
-1. Enable application development, if you have not already done so, by entering the following line at the command prompt:
-
-   `azsphere device enable-development`
-
+1. Enable application development, if you have not already done so, by entering the **azsphere device enable-development** command at the command prompt.
 1. Clone the [Azure Sphere samples](https://github.com/Azure/azure-sphere-samples) repository and find the *I2C_LSM6DS3_HighLevelApp* sample in the *I2C* folder or download the zip file from the [Microsoft samples browser](https://docs.microsoft.com/samples/azure/azure-sphere-samples/i2c/).
 1. Set up your hardware to display output from the sample. For instructions, see [Set up hardware to display output](https://docs.microsoft.com/azure-sphere/install/qs-multicore-dev#set-up-hardware-to-display-output).
 1. Make the following connections between the ST LSM6DS3 and MT3620 dev boards. Make sure that power is disconnected while you wire the boards.
@@ -84,9 +81,23 @@ This sample requires the following hardware:
 If you're using the Avnet MT3620 Starter Kit and its on-board ST LSM6DSO accelerometer instead of the ST LSM6DS3 external accelerometer, make the following changes in the sample:
 
 1. Open the `I2C\main.c` source code file:
-    1. Search for the code `static const uint8_t expectedWhoAmI = 0x69;` and replace `0x69` with `0x6C`.
-    1. Search for the code `i2cFd = I2CMaster_Open(SAMPLE_LSM6DS3_I2C);` and replace `SAMPLE_LSM6DS3_I2C` with `SAMPLE_LSM6DSO_I2C`.
-1. Open the `app_manifest.json` file. Search for `"I2cMaster": [ "$SAMPLE_LSM6DS3_I2C" ]` and replace `$SAMPLE_LSM6DS3_I2C` with `$SAMPLE_LSM6DSO_I2C`.
+    1. Replace `0x69` with `0x6C` in the following code:
+
+        ```c
+        static const uint8_t expectedWhoAmI = 0x69;
+        ```
+
+    1. Replace `SAMPLE_LSM6DS3_I2C` with `SAMPLE_LSM6DSO_I2C` in the following code:
+
+        ```c
+        i2cFd = I2CMaster_Open(SAMPLE_LSM6DS3_I2C);
+        ```
+
+1. Open the `app_manifest.json` file and replace `$SAMPLE_LSM6DS3_I2C` with `$SAMPLE_LSM6DSO_I2C` in the following code:
+
+    ```json
+    "I2cMaster": [ "$SAMPLE_LSM6DS3_I2C" ]
+    ```
 
 ## Build and run the sample
 

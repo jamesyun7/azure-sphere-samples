@@ -55,13 +55,13 @@ The sample uses the following Azure Sphere libraries.
 
 ## Prerequisites
 
-The sample requires the following hardware:
+This sample requires the following items:
 
-- Azure Sphere device
+- An [Azure Sphere development board](https://aka.ms/azurespheredevkits) that supports the [Sample Appliance](../../../HardwareDefinitions) hardware requirements.
 
-   **Note:** By default, this sample targets [MT3620 reference development board (RDB)](https://docs.microsoft.com/azure-sphere/hardware/mt3620-reference-board-design) hardware, such as the MT3620 development kit from Seeed Studio. To build the sample for different Azure Sphere hardware, change the Target Hardware Definition Directory in the CMakeLists.txt file. For detailed instructions, see the [README file in the HardwareDefinitions folder](../../../HardwareDefinitions/README.md).
+   **Note:** By default, the sample targets the [Reference Development Board](https://docs.microsoft.com/azure-sphere/hardware/mt3620-reference-board-design) design, which is implemented by the Seeed Studios MT3620 Development Board. To build the sample for different Azure Sphere hardware, change the value of the TARGET_HARDWARE variable in the `CMakeLists.txt` file. For detailed instructions, see the [Hardware Definitions README](../../../HardwareDefinitions/README.md) file.
 
-- Azure Sphere SDK version 21.04 or above. To check, run [**azsphere show-version**](https://docs.microsoft.com/azure-sphere/reference/azsphere-show-version) at the command prompt.
+- Azure Sphere SDK version 21.10 or above. To check, run [**azsphere show-version**](https://docs.microsoft.com/azure-sphere/reference/azsphere-show-version) at the command prompt.
 
 ## Setup
 
@@ -202,17 +202,16 @@ To update the device with the Deferred Update application running inside an IDE:
 
 1. After you deploy the Blink.imagepackage, restart the device.
 
-   On restart the device will check for updates.
+   On restart, the device will check for updates.
 
    After restart, LED 2 will initially light up green.
 
-   After a short period LED 3 will light up blue to indicate that an update is available and the following message will be displayed in the **Device Output** window.
+   After a short period, LED 3 will light up blue to indicate that an update is available and the following message will be displayed in the **Device Output** window:
 
-   ```sh
+   ```
    Remote debugging from host <host IP address>, port <host port>.
    INFO: Application starting
    INFO: Press SAMPLE_BUTTON_1 to allow the deferral.
-
    ```
 
 1. Press button A to start the update.

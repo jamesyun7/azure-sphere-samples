@@ -49,9 +49,12 @@ The sample uses the following Azure Sphere libraries.
 
 ## Prerequisites
 
-- [Seeed MT3620 Development Kit](https://aka.ms/azurespheredevkits) or other hardware that implements the [MT3620 Reference Development Board (RDB)](https://docs.microsoft.com/azure-sphere/hardware/mt3620-reference-board-design) design.
+This sample requires the following hardware:
+
+- An [Azure Sphere development board](https://aka.ms/azurespheredevkits).
+
 - A USB-to-serial adapter (for example, [FTDI Friend](https://www.digikey.com/catalog/en/partgroup/ftdi-friend/60311)) to connect the real-time capable core UART to a USB port on your PC.
-- A terminal emulator (such as Telnet or [PuTTY](https://www.chiark.greenend.org.uk/~sgtatham/putty/.)) to display the output.
+- A terminal emulator, such as Telnet or [PuTTY](https://www.chiark.greenend.org.uk/~sgtatham/putty/), to display the output.
 
 ## Setup
 
@@ -110,7 +113,7 @@ the sample with Visual Studio or Visual Studio Code.
 
 1. On the **File** menu, select **Open > Folder**.
 1. Navigate to your Azure Sphere samples directory, select IntercoreComms, and click **Select Folder**.
-1. On the **Select Startup Item** menu, select **GDB Debugger (All Cores)**.
+1. On the **Select Startup Item** menu, select **IntercoreComms (All Cores)**.
 1. On the **Build** menu, select **Build All**.
 1. On the **Debug** menu, select **Start**, or press **F5**.
 
@@ -122,7 +125,7 @@ the sample with Visual Studio or Visual Studio Code.
 1. Click **Open**.
 1. After the build files have been created, right-click on either of the two *CMakeLists.txt* files and select **Build All Projects**.
 1. Click the **Run** icon in the menu on the left side of the screen.
-1. On the pulldown menu, that appears at the top of the window on the left side of the screen, select **Launch for azure Sphere Applications (gdb)(workspace)**.
+1. On the pulldown menu, that appears at the top of the window on the left side of the screen, select **Launch Azure Sphere Apps (All Cores) (workspace)**.
 1. On the **Run** menu, select **Start Debugging**. 
 
 If you're running the sample from the command line you will need to build and run the RTApp before you build and run the high-level app. For more information about building real-time capable and high-level applications from the command line, go to [Build a sample application](../../BUILD_INSTRUCTIONS.md) and click on the links *Tutorial: Build a real-time capable application* and *Build and run a high-level sample with the CLI* respectively.
@@ -131,7 +134,7 @@ If you're running the sample from the command line you will need to build and ru
 
 The high-level application output will be displayed in the Output window in Visual Studio or Visual Studio Code.
 
-```sh
+```
 Remote debugging from host 192.168.35.1, port 55990
 High-level intercore comms application.
 Sends data to, and receives data from a real-time capable application.
@@ -147,7 +150,7 @@ Because the HLApp and RTApp are not synchronized, the specific numbers in the me
 
 The real-time capable application output will be sent to the serial terminal for display.
 
-```sh
+```
 --------------------------------
 IntercoreComms_RTApp_MT3620_BareMetal
 App built on: Mar 21 2020, 13:23:18

@@ -48,15 +48,19 @@ The sample uses the following Azure Sphere libraries.
 
 ## Prerequisites
 
-This reference solution requires the following:
+This reference solution requires the following items:
 
-- Azure Sphere SDK version 21.04 or above. At the command prompt, run **azsphere show-version** to check. Download and install the latest SDK as needed. The [set-up procedures](https://docs.microsoft.com/azure-sphere/install/overview) describe how to choose and install an SDK.
-- Azure Sphere MT3620 board
+- Azure Sphere SDK version 21.10 or above. At the command prompt, run [**azsphere show-version**](https://docs.microsoft.com/azure-sphere/reference/azsphere-show-version) to check. Download and install the latest SDK as needed. The [setup procedures](https://docs.microsoft.com/azure-sphere/install/overview) describe how to choose and install an SDK.
+
+- An [Azure Sphere development board](https://aka.ms/azurespheredevkits) that supports the [Sample Appliance](../../HardwareDefinitions) hardware requirements.
+
+   **Note:** By default, the sample targets the [Reference Development Board](https://docs.microsoft.com/azure-sphere/hardware/mt3620-reference-board-design) design, which is implemented by the Seeed Studios MT3620 Development Board. To build the sample for different Azure Sphere hardware, change the value of the TARGET_HARDWARE variable in the `CMakeLists.txt` file. For detailed instructions, see the [Hardware Definitions README](../../HardwareDefinitions/README.md) file.
+
 - Nordic nRF52 BLE development board
-- Jumper wires to connect the boards
-- Two free USB ports on your computer
 
-**Note:** By default, this sample targets [MT3620 reference development board (RDB)](https://docs.microsoft.com/azure-sphere/hardware/mt3620-reference-board-design) hardware, such as the MT3620 development kit from Seeed Studios. To build the sample for different Azure Sphere hardware, change the Target Hardware Definition Directory in the CMakeLists.txt file. For detailed instructions, see the [README file in the HardwareDefinitions folder](../../HardwareDefinitions/README.md). You might also need to wire the device differently.
+- Jumper wires to connect the boards
+
+- Two free USB ports on your computer
 
 ## Setup
 
@@ -79,7 +83,7 @@ This reference solution requires the following:
 1. Install bootloader on the nRF52.
 
    1. Connect the nRF52 developer board to your computer using USB. Once connected, the nRF52 displays a JLINK removable drive in Windows.
-   1. Find softdevice_Bootloader.hex in the `ExternalMcuUpdateNrf52\Binaries` folder, and copy it to the JLINK drive. The nRF52 restarts automatically and runs the bootloader.
+   1. Find `*softdevice_Bootloader.hex` in the `ExternalMcuUpdate\Binaries` folder, and copy it to the JLINK drive. The nRF52 restarts automatically and runs the bootloader.
    1. Observe that LED1 and LED3 are lit on the nRF52 development board, which indicates that the bootloader has started successfully.
 
 ## Build and run the sample
@@ -181,8 +185,7 @@ You can combine this solution for external MCU update with the solution for [BLE
 
 ### Obtain the nRF52 firmware files
 
-1. Rebuild the nRF52 firmware for the [BLE-based Wi-Fi app](https://github.com/Azure/azure-sphere-samples/tree/master/Samples/WifiSetupAndDeviceControlViaBle#build-your-own-solution). Select **Build->Build Solution** or press F7 to generate a .hex file. The hex file is placed in this location: 
-   `<PATH_TO_DOWNLOADED_SAMPLES>\WifiSetupAndDeviceControlViaBle\Nrf52App\pca10040\s132\ses\Output\Release\Exe\ble_app_uart_pca10040_s132.hex`
+1. Rebuild the nRF52 firmware for the [BLE-based Wi-Fi app](https://github.com/Azure/azure-sphere-samples/tree/master/Samples/WifiSetupAndDeviceControlViaBle#build-your-own-solution). Select **Build->Build Solution** or press F7 to generate a .hex file. The hex file is placed in the following location: `<PATH_TO_DOWNLOADED_SAMPLES>\WifiSetupAndDeviceControlViaBle\Nrf52App\pca10040\s132\ses\Output\Release\Exe\ble_app_uart_pca10040_s132.hex`
 
 1. Follow the steps specified in [Obtain the BlinkyV3.bin and BlinkyV3.dat firmware files](#obtain-the-blinkyv3bin-and-blinkyv3dat-firmware-files) to transform this .hex file into .dat and .bin files.
 1. Rename these fields as desired—for example, WifiSetupAndDeviceControlViaBle.bin/.dat
